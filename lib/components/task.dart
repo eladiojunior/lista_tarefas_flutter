@@ -6,15 +6,22 @@ class TaskWidget extends StatefulWidget {
   final String imageTask;
   final int difficultyLevel;
 
-  const TaskWidget(this.nameTask, this.imageTask, this.difficultyLevel, {Key? key})
-      : super(key: key);
+  TaskWidget(this.nameTask, this.imageTask, this.difficultyLevel, {Key? key}) : super(key: key);
+
+  int levelTask = 0;
 
   @override
   State<TaskWidget> createState() => _TaskWidgetState();
 }
 
 class _TaskWidgetState extends State<TaskWidget> {
-  int levelTask = 0;
+
+  StatefulWidget getImageTask() {
+    bool isImgAssetOrNetwork = widget.imageTask.toLowerCase().contains("http");
+    return (isImgAssetOrNetwork ?
+      Image.network(widget.imageTask, fit: BoxFit.cover) :
+      Image.asset(widget.imageTask, fit: BoxFit.cover));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,10 +50,7 @@ class _TaskWidgetState extends State<TaskWidget> {
                       height: 100,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(4.0),
-                        child: Image.asset(
-                          widget.imageTask,
-                          fit: BoxFit.cover,
-                        ),
+                        child: getImageTask(),
                       )),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -66,7 +70,7 @@ class _TaskWidgetState extends State<TaskWidget> {
                     child: ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            levelTask++;
+                            widget.levelTask++;
                           });
                         },
                         child: Column(
@@ -94,14 +98,14 @@ class _TaskWidgetState extends State<TaskWidget> {
                       child: LinearProgressIndicator(
                         color: Colors.white,
                         value: (widget.difficultyLevel > 0)
-                            ? ((levelTask / widget.difficultyLevel) / 10)
+                            ? ((widget.levelTask / widget.difficultyLevel) / 10)
                             : 1,
                         minHeight: 15,
                       )),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text("Nível: $levelTask",
+                  child: Text("Nível: ${widget.levelTask}",
                       style: const TextStyle(color: Colors.white, fontSize: 20)),
                 )
               ],
